@@ -8,6 +8,7 @@ import ExperienceSection from '../components/ExperienceSection';
 import ProjectsSection from '../components/ProjectsSection';
 import CertificationsSection from '../components/CertificationsSection';
 import ContactSection from '../components/ContactSection';
+import Footer from '../components/Footer';
 
 const Index = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -50,6 +51,7 @@ const Index = () => {
       <ProjectsSection isDarkMode={isDarkMode} />
       <CertificationsSection isDarkMode={isDarkMode} />
       <ContactSection isDarkMode={isDarkMode} />
+      <Footer isDarkMode={isDarkMode} />
     </div>
   );
 };

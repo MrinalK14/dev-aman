@@ -75,18 +75,18 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ isDarkMode }) => {
         github: project.github,
         live: project.live,
         content: (
-          <div className="space-y-6">
-            <p className={`text-lg leading-relaxed ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+          <div className="space-y-4">
+            <p className={`text-base leading-relaxed ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
               {project.description}
             </p>
             {project.technologies && (
               <div>
-                <h4 className="text-lg font-semibold mb-3">Technologies Used</h4>
-                <div className="flex flex-wrap gap-2">
+                <h4 className="text-base font-semibold mb-2">Technologies Used</h4>
+                <div className="flex flex-wrap gap-1.5">
                   {project.technologies.map(tech => (
                     <span 
                       key={tech} 
-                      className={`px-3 py-1 rounded-full text-sm ${
+                      className={`px-2.5 py-1 rounded-full text-xs ${
                         isDarkMode 
                           ? 'bg-neutral-800 text-neutral-300' 
                           : 'bg-neutral-100 text-neutral-700'
@@ -98,13 +98,13 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ isDarkMode }) => {
                 </div>
               </div>
             )}
-            <div className="flex gap-4 mt-6">
+            <div className="flex gap-3 mt-4">
               {project.github && (
                 <a 
                   href={project.github} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="px-6 py-3 rounded-full bg-neutral-800 dark:bg-white text-white dark:text-neutral-800 font-medium hover:opacity-90 transition-opacity"
+                  className="px-5 py-2.5 rounded-full bg-neutral-800 dark:bg-white text-white dark:text-neutral-800 text-sm font-medium hover:opacity-90 transition-opacity"
                 >
                   View Code
                 </a>
@@ -114,7 +114,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ isDarkMode }) => {
                   href={project.live} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="px-6 py-3 rounded-full bg-blue-500 text-white font-medium hover:opacity-90 transition-opacity"
+                  className="px-5 py-2.5 rounded-full bg-blue-500 text-white text-sm font-medium hover:opacity-90 transition-opacity"
                 >
                   Live Demo
                 </a>

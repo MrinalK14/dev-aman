@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowDown, Linkedin, FileText, Github } from 'lucide-react';
 import { FlipWords } from './ui/FlipWords';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
 interface HeroSectionProps {
   isDarkMode: boolean;
@@ -20,6 +21,12 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isDarkMode }) => {
   // Animated dots state
   const [dots, setDots] = useState<Array<{x: number, y: number, size: number, delay: number}>>([]);
   
+  // Scroll-based animations
+  const { scrollY } = useScroll();
+  const opacity = useTransform(scrollY, [0, 300, 600], [1, 0.5, 0]);
+  const scale = useTransform(scrollY, [0, 300, 600], [1, 0.95, 0.9]);
+  const y = useTransform(scrollY, [0, 300], [0, -50]);
+  
   useEffect(() => {
     // Generate random dots for the background
     const newDots = Array.from({ length: 20 }, () => ({
@@ -32,11 +39,12 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isDarkMode }) => {
   }, []);
 
   return (
-    <section 
+    <motion.section 
       id="home" 
       className={`min-h-screen flex flex-col justify-center relative overflow-hidden transition-all duration-200 ${
         isDarkMode ? 'bg-black' : 'bg-white'
       }`}
+      style={{ opacity, scale }}
     >
       {/* Grid background with radial fade */}
       <div
@@ -55,7 +63,10 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isDarkMode }) => {
         } [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]`}
       />
 
-      <div className="container mx-auto px-4 py-12 sm:py-16 relative z-20">
+      <motion.div 
+        className="container mx-auto px-4 py-12 sm:py-16 relative z-20"
+        style={{ y }}
+      >
         <div className="max-w-3xl mx-auto">
           {/* Mobile view - left aligned layout */}
           <div className="sm:hidden space-y-6 text-left px-2">
@@ -230,11 +241,11 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isDarkMode }) => {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
       
 
       
-      <div className="absolute bottom-8 left-0 right-0 mx-auto flex justify-center animate-bounce z-20">
+      <div className="absolute bottom-16 sm:bottom-8 left-0 right-0 mx-auto flex justify-center animate-bounce z-20">
         <button 
           onClick={() => document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' })}
           className={`p-2 rounded-full ${
@@ -246,7 +257,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ isDarkMode }) => {
           <ArrowDown size={24} className="hidden sm:block" />
         </button>
       </div>
-    </section>
+    </motion.section>
   );
 };
 

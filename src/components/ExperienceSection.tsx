@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { Briefcase } from 'lucide-react';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { Briefcase, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface ExperienceSectionProps {
   isDarkMode: boolean;
@@ -11,6 +11,7 @@ interface TimelineEntry {
   period: string;
   company: string;
   content: React.ReactNode;
+  points: string[];
 }
 
 const ExperienceSection: React.FC<ExperienceSectionProps> = ({ isDarkMode }) => {
@@ -19,6 +20,13 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({ isDarkMode }) => 
       title: "Software Engineer",
       company: "IntelliCredence Pvt Ltd",
       period: "Jul 2024 - Present",
+      points: [
+        "Architected a scalable meet-up event management platform using Next.js and .NET Core, improving event scheduling, user registration, and real-time attendee engagement.",
+        "Implemented role-based access for admins, users, organizers, venues, speakers, sponsors, and caterers, ensuring secure event management through Java microservices for authentication and Redis for real-time scheduling.",
+        "Developed an HRMS CRM system for internal employee management, integrating AI-powered chatbots for onboarding, payroll, and attendance tracking, reducing HR workload by 40%.",
+        "Streamlined key HR processes, including generating employee contracts and documents with OpenAI GPT-3 and DocuSign, improving process efficiency by 40%.",
+        "Implemented ATS scanning and machine learning-based routing for recruitment and HR issues, enhancing efficiency and reducing resolution time by 45%."
+      ],
       content: (
         <div className={`text-base ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
           <ul className="space-y-2 list-disc pl-5">
@@ -35,6 +43,12 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({ isDarkMode }) => 
       title: "Software Engineer",
       company: "Book Luxury Yachts",
       period: "Feb 2023 - Jul 2024",
+      points: [
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos."
+      ],
       content: (
         <div className={`text-base ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
           <ul className="space-y-2 list-disc pl-5">
@@ -50,6 +64,11 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({ isDarkMode }) => 
       title: "Software Engineer (Contract)",
       company: "Stacksmith Consultency",
       period: "Feb 2022 - Jul 2022",
+      points: [
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos."
+      ],
       content: (
         <div className={`text-base ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
           <ul className="space-y-2 list-disc pl-5">
@@ -64,6 +83,11 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({ isDarkMode }) => 
       title: "Software Developer Intern ",
       company: "Stacksmith Consultency",
       period: "Nov 2021 - Jan 2022",
+      points: [
+        "Delivered defect-free web and mobile applications by adhering to rigorous testing standards and achieving 95% deployment accuracy.",
+        "Documented comprehensive software and API processes, enhancing team collaboration and transition efficiency by 20%.",
+        "Improved database query efficiency, reducing query execution time by 25%."
+      ],
       content: (
         <div className={`text-base ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
           <ul className="space-y-2 list-disc pl-5">
@@ -92,13 +116,59 @@ const Timeline = ({ data, isDarkMode }: { data: TimelineEntry[], isDarkMode: boo
   const ref = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
+  const [expandedCard, setExpandedCard] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    const updateHeight = () => {
+      if (ref.current) {
+        const rect = ref.current.getBoundingClientRect();
+        setHeight(rect.height);
+      }
+    };
+
+    // Initial height calculation
+    updateHeight();
+
+    // Set up ResizeObserver to track height changes during animations with throttling
+    let resizeObserver: ResizeObserver | null = null;
+    let timeoutId: NodeJS.Timeout | null = null;
+    
     if (ref.current) {
-      const rect = ref.current.getBoundingClientRect();
-      setHeight(rect.height);
+      resizeObserver = new ResizeObserver(() => {
+        // Throttle resize observer calls to prevent excessive updates
+        if (timeoutId) clearTimeout(timeoutId);
+        timeoutId = setTimeout(updateHeight, 16); // ~60fps
+      });
+      resizeObserver.observe(ref.current);
     }
-  }, [ref]);
+
+    // Multiple height updates during transitions for smoothness
+    const intervals = [100, 200, 350, 500]; // Progressive updates during animation
+    const timeouts: NodeJS.Timeout[] = [];
+    
+    intervals.forEach(delay => {
+      const timeout = setTimeout(updateHeight, delay);
+      timeouts.push(timeout);
+    });
+
+    return () => {
+      if (resizeObserver) resizeObserver.disconnect();
+      if (timeoutId) clearTimeout(timeoutId);
+      timeouts.forEach(timeout => clearTimeout(timeout));
+    };
+  }, [ref, expandedCard]);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -107,6 +177,107 @@ const Timeline = ({ data, isDarkMode }: { data: TimelineEntry[], isDarkMode: boo
 
   const heightTransform = useTransform(scrollYProgress, [0, 1], [0, height]);
   const opacityTransform = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
+
+  const toggleExpanded = async (index: number) => {
+    // If clicking the same card, just toggle it
+    if (expandedCard === index) {
+      setExpandedCard(null);
+      return;
+    }
+
+    // If another card is expanded, collapse it first, then expand the new one
+    if (expandedCard !== null && expandedCard !== index) {
+      setExpandedCard(null);
+      // Wait for collapse animation to complete before expanding new card
+      setTimeout(() => {
+        setExpandedCard(index);
+      }, 150); // Half the animation duration for smoother transition
+    } else {
+      // No card is expanded, directly expand the clicked one
+      setExpandedCard(index);
+    }
+  };
+
+  const renderCardContent = (item: TimelineEntry, index: number) => {
+    if (!isMobile) {
+      return item.content;
+    }
+
+    const isExpanded = expandedCard === index;
+    const firstPoint = item.points[0];
+    const remainingPoints = item.points.slice(1);
+
+    return (
+      <div className={`text-base ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+        <ul className="space-y-2 list-disc pl-5">
+          <li>{firstPoint}</li>
+          <AnimatePresence mode="wait">
+            {isExpanded && (
+              <motion.div
+                key="expanded-content"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2, ease: 'easeInOut' }}
+              >
+                {remainingPoints.map((point, pointIndex) => (
+                  <motion.li
+                    key={pointIndex}
+                    initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                    animate={{ 
+                      opacity: 1, 
+                      height: 'auto', 
+                      marginTop: '0.5rem',
+                      transition: { 
+                        duration: 0.3, 
+                        ease: 'easeInOut',
+                        delay: pointIndex * 0.05 // Stagger animation for smoother effect
+                      }
+                    }}
+                    exit={{ 
+                      opacity: 0, 
+                      height: 0, 
+                      marginTop: 0,
+                      transition: { 
+                        duration: 0.2, 
+                        ease: 'easeInOut',
+                        delay: (remainingPoints.length - pointIndex - 1) * 0.03 // Reverse stagger for collapse
+                      }
+                    }}
+                  >
+                    {point}
+                  </motion.li>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </ul>
+        
+        {item.points.length > 1 && (
+          <button
+            onClick={() => toggleExpanded(index)}
+            className={`mt-4 flex items-center gap-2 text-sm font-medium transition-colors duration-200 ${
+              isDarkMode 
+                ? 'text-modern-primary hover:text-blue-400' 
+                : 'text-modern-primary hover:text-blue-600'
+            }`}
+          >
+            {isExpanded ? (
+              <>
+                <span>View less</span>
+                <ChevronUp size={16} />
+              </>
+            ) : (
+              <>
+                <span>View more ({remainingPoints.length} more)</span>
+                <ChevronDown size={16} />
+              </>
+            )}
+          </button>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div
@@ -137,7 +308,7 @@ const Timeline = ({ data, isDarkMode }: { data: TimelineEntry[], isDarkMode: boo
             key={index}
             className="flex justify-start pt-10 md:pt-40 md:gap-10"
           >
-            <div className="sticky flex flex-col md:flex-row z-40 items-center top-40 self-start max-w-xs lg:max-w-sm md:w-full">
+            <div className="md:sticky flex flex-col md:flex-row z-40 items-center md:top-40 self-start max-w-xs lg:max-w-sm md:w-full">
               <div className={`h-10 absolute left-3 md:left-3 w-10 rounded-full ${
                 isDarkMode ? 'bg-black' : 'bg-white'
               } flex items-center justify-center`}>
@@ -170,13 +341,25 @@ const Timeline = ({ data, isDarkMode }: { data: TimelineEntry[], isDarkMode: boo
               }`}>
                 {item.company}
               </p>
-              <div className={`p-6 rounded-xl ${
-                isDarkMode 
-                  ? 'bg-gray-800/50' 
-                  : 'bg-white border border-gray-100 shadow-sm'
-              }`}>
-                {item.content}
-              </div>
+              <motion.div 
+                className={`p-6 rounded-xl ${
+                  isDarkMode 
+                    ? 'bg-gray-800/50' 
+                    : 'bg-white border border-gray-100 shadow-sm'
+                }`}
+                layout="position"
+                initial={false}
+                animate={{ 
+                  scale: expandedCard === index ? 1.02 : 1,
+                  transition: { duration: 0.2, ease: 'easeInOut' }
+                }}
+                transition={{ 
+                  layout: { duration: 0.3, ease: 'easeInOut' },
+                  scale: { duration: 0.2, ease: 'easeInOut' }
+                }}
+              >
+                {renderCardContent(item, index)}
+              </motion.div>
             </div>
             </div>
           ))}

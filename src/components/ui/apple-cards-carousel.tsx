@@ -113,7 +113,7 @@ export const Card = ({ card, index, layout = false }: CardProps) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
+            className="fixed inset-0 z-50 flex md:items-center md:justify-center items-end justify-center bg-black/80"
             onClick={() => setIsOpen(false)}
           >
             <motion.div
@@ -122,7 +122,7 @@ export const Card = ({ card, index, layout = false }: CardProps) => {
               exit={{ opacity: 0, y: 100 }}
               transition={{ type: "spring", damping: 20, stiffness: 100 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-5xl max-h-[90vh] overflow-y-auto bg-white dark:bg-neutral-900 rounded-3xl shadow-2xl"
+              className="w-full max-w-5xl max-h-[90vh] md:max-h-[90vh] max-h-[85vh] md:mt-0 mt-16 overflow-y-auto scrollbar-hide bg-white dark:bg-neutral-900 md:rounded-3xl rounded-t-3xl md:mb-0 mb-0 shadow-2xl"
             >
               <div className="relative">
                 <img
