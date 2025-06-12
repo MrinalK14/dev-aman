@@ -41,6 +41,7 @@ const Footer: React.FC<FooterProps> = ({ isDarkMode }) => {
     { name: 'About', href: '#about' },
     { name: 'Experience', href: '#experience' },
     { name: 'Projects', href: '#projects' },
+    { name: 'Interests', href: '#interests' },
     { name: 'Contact', href: '#contact' },
   ];
 

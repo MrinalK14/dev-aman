@@ -1,13 +1,45 @@
 import React, { useState } from 'react';
 import { Award, ExternalLink } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { LinkPreview } from './ui/link-preview';
 
 interface CertificationsSectionProps {
   isDarkMode: boolean;
 }
 
 const CertificationsSection: React.FC<CertificationsSectionProps> = ({ isDarkMode }) => {
-  const [activeTab, setActiveTab] = useState<'achievements' | 'interests'>('achievements');
+  const [activeTab, setActiveTab] = useState<'certifications' | 'achievements'>('certifications');
+
+  const certifications = [
+    {
+      title: "Learning REST APIs",
+      issuer: "LinkedIn Learning",
+      date: "2021",
+      url: "https://www.linkedin.com/learning/learning-rest-apis",
+      imageSrc: "/C1.jpg"
+    },
+    {
+      title: "Become a Full-Stack Web Developer",
+      issuer: "LinkedIn Learning",
+      date: "2021",
+      url: "https://www.linkedin.com/learning/paths/become-a-full-stack-web-developer",
+      imageSrc: "/C2.jpg"
+    },
+    {
+      title: "Learning SQL Programming",
+      issuer: "LinkedIn Learning",
+      date: "2021",
+      url: "https://www.linkedin.com/learning/learning-sql-programming",
+      imageSrc: "/C3.jpg"
+    },
+    {
+      title: "Become a Software Developer",
+      issuer: "LinkedIn Learning",
+      date: "2021",
+      url: "https://www.linkedin.com/learning/paths/become-a-software-developer",
+      imageSrc: "/C4.jpg"
+    }
+  ];
 
   const achievements = [
     {
@@ -28,25 +60,6 @@ const CertificationsSection: React.FC<CertificationsSectionProps> = ({ isDarkMod
     }
   ];
 
-  const interests = [
-    {
-      title: "Artificial Intelligence",
-      description: "Passionate about machine learning and AI applications in web development"
-    },
-    {
-      title: "Open Source",
-      description: "Active contributor to various open source projects and communities"
-    },
-    {
-      title: "UI/UX Design",
-      description: "Enthusiastic about creating beautiful and intuitive user experiences"
-    },
-    {
-      title: "Tech Innovation",
-      description: "Always exploring new technologies and development methodologies"
-    }
-  ];
-
   return (
     <section 
       id="certifications" 
@@ -61,9 +74,9 @@ const CertificationsSection: React.FC<CertificationsSectionProps> = ({ isDarkMod
             <span className={`text-sm uppercase tracking-wider font-medium text-modern-primary`}>Credentials</span>
             <div className={`h-px w-8 bg-modern-primary`}></div>
           </div>
-          <h2 className="section-title mb-4 animate-reveal-up text-center">Achievements & Interests</h2>
+          <h2 className="section-title mb-4 animate-reveal-up text-center">Certifications & Achievements</h2>
           <p className={`section-subtitle max-w-2xl mx-auto animate-reveal-up animate-delay-100 text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-            Notable accomplishments and personal interests
+            Professional certifications and notable accomplishments
           </p>
         </div>
         
@@ -71,6 +84,23 @@ const CertificationsSection: React.FC<CertificationsSectionProps> = ({ isDarkMod
           {/* Tabs */}
           <div className="flex justify-center mb-12">
             <div className={`inline-flex rounded-lg p-1 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-100'}`}>
+              <button
+                onClick={() => setActiveTab('certifications')}
+                className={`w-36 px-6 py-3 text-sm font-medium rounded-md transition-all ${
+                  activeTab === 'certifications' 
+                    ? isDarkMode 
+                      ? `bg-modern-primary text-white` 
+                      : `bg-white shadow-sm text-modern-dark`
+                    : isDarkMode
+                      ? `text-gray-400 hover:text-gray-300`
+                      : `text-gray-500 hover:text-gray-700`
+                }`}
+              >
+                <span className="flex items-center gap-2 justify-center">
+                  <Award size={18} />
+                  <span>Certifications</span>
+                </span>
+              </button>
               <button
                 onClick={() => setActiveTab('achievements')}
                 className={`w-36 px-6 py-3 text-sm font-medium rounded-md transition-all ${
@@ -88,97 +118,105 @@ const CertificationsSection: React.FC<CertificationsSectionProps> = ({ isDarkMod
                   <span>Achievements</span>
                 </span>
               </button>
-              <button
-                onClick={() => setActiveTab('interests')}
-                className={`w-36 px-6 py-3 text-sm font-medium rounded-md transition-all ${
-                  activeTab === 'interests' 
-                    ? isDarkMode 
-                      ? `bg-modern-primary text-white` 
-                      : `bg-white shadow-sm text-modern-dark`
-                    : isDarkMode
-                      ? `text-gray-400 hover:text-gray-300`
-                      : `text-gray-500 hover:text-gray-700`
-                }`}
-              >
-                <span className="flex items-center gap-2 justify-center">
-                  <span>Interests</span>
-                </span>
-              </button>
             </div>
           </div>
           
           {/* Tab Content */}
-          <div className="relative">
-            {/* Achievements Tab */}
-            {activeTab === 'achievements' && (
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.2 }}
-                className="grid md:grid-cols-2 gap-6"
-              >
-                {achievements.map((achievement, index) => (
-                  <div 
-                    key={index}
-                    className={`p-6 rounded-2xl transition-all duration-300 ${
-                      isDarkMode 
-                        ? 'bg-gray-900/50 hover:bg-gray-800' 
-                        : 'bg-white hover:shadow-md'
-                    }`}
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className={`w-2 h-2 mt-2 rounded-full ${
-                        index % 4 === 0 ? 'bg-modern-primary' : 
-                        index % 4 === 1 ? 'bg-modern-secondary' :
-                        index % 4 === 2 ? 'bg-modern-accent' : 'bg-modern-error'
-                      }`}></div>
-                      <div>
-                        <h4 className="font-medium mb-1">{achievement.title}</h4>
-                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                          {achievement.description}
-                        </p>
+          <AnimatePresence mode="wait">
+            <div className="relative">
+              {/* Certifications Tab */}
+              {activeTab === 'certifications' && (
+                <motion.div 
+                  key="certifications"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  className="grid md:grid-cols-2 gap-6"
+                >
+                  {certifications.map((certification, index) => (
+                    <div 
+                      key={index}
+                      className={`p-6 rounded-2xl transition-all duration-300 ${
+                        isDarkMode 
+                          ? 'bg-gray-900/50 hover:bg-gray-800' 
+                          : 'bg-white hover:shadow-md'
+                      }`}
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className={`w-2 h-2 mt-2 rounded-full ${
+                          index % 4 === 0 ? 'bg-modern-primary' : 
+                          index % 4 === 1 ? 'bg-modern-secondary' :
+                          index % 4 === 2 ? 'bg-modern-accent' : 'bg-modern-error'
+                        }`}></div>
+                        <div className="flex-1">
+                          <div className="flex items-start justify-between mb-2">
+                            <LinkPreview
+                              url={certification.url}
+                              className="font-medium hover:text-modern-primary transition-colors duration-200 cursor-pointer"
+                              isStatic={true}
+                              imageSrc={certification.imageSrc}
+                              width={300}
+                              height={200}
+                            >
+                              <h4 className="font-medium">{certification.title}</h4>
+                            </LinkPreview>
+                            <span className={`text-xs px-2 py-1 rounded-full ${
+                              isDarkMode ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'
+                            }`}>
+                              {certification.date}
+                            </span>
+                          </div>
+                          <p className={`text-sm font-medium mb-1 ${
+                            isDarkMode ? 'text-gray-300' : 'text-gray-700'
+                          }`}>
+                            {certification.issuer}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </motion.div>
-            )}
-            
-            {/* Interests Tab */}
-            {activeTab === 'interests' && (
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.2 }}
-                className="grid md:grid-cols-2 gap-6"
-              >
-                {interests.map((interest, index) => (
-                  <div 
-                    key={index}
-                    className={`p-6 rounded-2xl transition-all duration-300 ${
-                      isDarkMode 
-                        ? 'bg-gray-900/50 hover:bg-gray-800' 
-                        : 'bg-white hover:shadow-md'
-                    }`}
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className={`w-2 h-2 mt-2 rounded-full ${
-                        index % 4 === 0 ? 'bg-modern-primary' : 
-                        index % 4 === 1 ? 'bg-modern-secondary' :
-                        index % 4 === 2 ? 'bg-modern-accent' : 'bg-modern-error'
-                      }`}></div>
-                      <div>
-                        <h4 className="font-medium mb-1">{interest.title}</h4>
-                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                          {interest.description}
-                        </p>
+                  ))}
+                </motion.div>
+              )}
+              
+              {/* Achievements Tab */}
+              {activeTab === 'achievements' && (
+                <motion.div 
+                  key="achievements"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  className="grid md:grid-cols-2 gap-6"
+                >
+                  {achievements.map((achievement, index) => (
+                    <div 
+                      key={index}
+                      className={`p-6 rounded-2xl transition-all duration-300 ${
+                        isDarkMode 
+                          ? 'bg-gray-900/50 hover:bg-gray-800' 
+                          : 'bg-white hover:shadow-md'
+                      }`}
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className={`w-2 h-2 mt-2 rounded-full ${
+                          index % 4 === 0 ? 'bg-modern-primary' : 
+                          index % 4 === 1 ? 'bg-modern-secondary' :
+                          index % 4 === 2 ? 'bg-modern-accent' : 'bg-modern-error'
+                        }`}></div>
+                        <div>
+                          <h4 className="font-medium mb-1">{achievement.title}</h4>
+                          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            {achievement.description}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </motion.div>
-            )}
-          </div>
+                  ))}
+                </motion.div>
+              )}
+            </div>
+          </AnimatePresence>
         </div>
       </div>
     </section>

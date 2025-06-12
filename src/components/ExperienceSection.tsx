@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { Briefcase, ChevronDown, ChevronUp } from 'lucide-react';
+import { Briefcase, ChevronDown, ChevronUp, GraduationCap } from 'lucide-react';
 
 interface ExperienceSectionProps {
   isDarkMode: boolean;
@@ -15,6 +15,8 @@ interface TimelineEntry {
 }
 
 const ExperienceSection: React.FC<ExperienceSectionProps> = ({ isDarkMode }) => {
+  const [activeTab, setActiveTab] = useState<'experience' | 'education'>('experience');
+
   const experiences: TimelineEntry[] = [
     {
       title: "Software Engineer",
@@ -100,6 +102,53 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({ isDarkMode }) => 
     }
   ];
 
+  const education: TimelineEntry[] = [
+    {
+      title: "Master of Computer Applications (MCA)",
+      company: "Lovely Professional University",
+      period: "2021 - 2023",
+      points: [
+        "Specialized in advanced software development, data structures, algorithms, and modern programming paradigms.",
+        "Completed coursework in artificial intelligence, machine learning, database management, and web technologies.",
+        "Developed multiple full-stack projects using React, Node.js, and Python during academic curriculum.",
+        "Maintained excellent academic performance with focus on practical application of theoretical concepts.",
+        "Participated in coding competitions and technical workshops to enhance problem-solving skills."
+      ],
+      content: (
+        <div className={`text-base ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+          <ul className="space-y-2 list-disc pl-5">
+            <li>Specialized in advanced software development, data structures, algorithms, and modern programming paradigms.</li>
+            <li>Completed coursework in artificial intelligence, machine learning, database management, and web technologies.</li>
+            <li>Developed multiple full-stack projects using React, Node.js, and Python during academic curriculum.</li>
+            <li>Maintained excellent academic performance with focus on practical application of theoretical concepts.</li>
+            <li>Participated in coding competitions and technical workshops to enhance problem-solving skills.</li>
+          </ul>
+        </div>
+      )
+    },
+    {
+      title: "Bachelor of Computer Applications (BCA)",
+      company: "ARKA Jain University",
+      period: "2018 - 2021",
+      points: [
+        "Comprehensive foundation in computer science fundamentals, programming languages, and software engineering principles.",
+        "Studied core subjects including C/C++, Java, Data Structures, Computer Networks, and Database Management Systems.",
+        "Completed hands-on projects in web development, mobile applications, and desktop software development.",
+        "Achieved strong academic standing while developing practical coding and project management skills."
+      ],
+      content: (
+        <div className={`text-base ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+          <ul className="space-y-2 list-disc pl-5">
+            <li>Comprehensive foundation in computer science fundamentals, programming languages, and software engineering principles.</li>
+            <li>Studied core subjects including C/C++, Java, Data Structures, Computer Networks, and Database Management Systems.</li>
+            <li>Completed hands-on projects in web development, mobile applications, and desktop software development.</li>
+            <li>Achieved strong academic standing while developing practical coding and project management skills.</li>
+          </ul>
+        </div>
+      )
+    }
+  ];
+
   return (
     <section 
       id="experience" 
@@ -107,12 +156,75 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({ isDarkMode }) => 
         isDarkMode ? 'bg-black text-white' : 'bg-white text-modern-dark'
       }`}
     >
-      <Timeline data={experiences} isDarkMode={isDarkMode} />
+      <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-10">
+        {/* Section Header */}
+        <div className="text-center mb-12">
+          <div className="flex items-center gap-2 mb-3 justify-center">
+            <div className={`h-px w-8 bg-modern-primary`}></div>
+            <span className={`text-sm uppercase tracking-wider font-medium text-modern-primary`}>
+              My journey
+            </span>
+            <div className={`h-px w-8 bg-modern-primary`}></div>
+          </div>
+          <h2 className="section-title mb-4 animate-reveal-up text-center">
+            Experience & Education
+          </h2>
+          <p className={`section-subtitle max-w-2xl mx-auto animate-reveal-up animate-delay-100 text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+            My professional career path and educational background
+          </p>
+        </div>
+
+        {/* Tab Navigation */}
+        <div className="flex justify-center mb-12">
+          <div className={`inline-flex rounded-xl p-1 ${
+            isDarkMode ? 'bg-gray-800/50' : 'bg-gray-100'
+          }`}>
+            <button
+              onClick={() => setActiveTab('experience')}
+              className={`px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                activeTab === 'experience'
+                  ? isDarkMode
+                    ? 'bg-modern-primary text-white shadow-lg'
+                    : 'bg-modern-primary text-white shadow-lg'
+                  : isDarkMode
+                    ? 'text-gray-300 hover:text-white'
+                    : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Experience
+            </button>
+            <button
+              onClick={() => setActiveTab('education')}
+              className={`px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                activeTab === 'education'
+                  ? isDarkMode
+                    ? 'bg-modern-primary text-white shadow-lg'
+                    : 'bg-modern-primary text-white shadow-lg'
+                  : isDarkMode
+                    ? 'text-gray-300 hover:text-white'
+                    : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Education
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Timeline Content */}
+      <AnimatePresence mode="wait">
+        <Timeline 
+          key={activeTab}
+          data={activeTab === 'experience' ? experiences : education} 
+          isDarkMode={isDarkMode} 
+          isEducation={activeTab === 'education'}
+        />
+      </AnimatePresence>
     </section>
   );
 };
 
-const Timeline = ({ data, isDarkMode }: { data: TimelineEntry[], isDarkMode: boolean }) => {
+const Timeline = ({ data, isDarkMode, isEducation }: { data: TimelineEntry[], isDarkMode: boolean, isEducation: boolean }) => {
   const ref = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
@@ -129,6 +241,11 @@ const Timeline = ({ data, isDarkMode }: { data: TimelineEntry[], isDarkMode: boo
     
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // Reset expanded card when switching between tabs
+  useEffect(() => {
+    setExpandedCard(null);
+  }, [isEducation]);
 
   useEffect(() => {
     const updateHeight = () => {
@@ -280,28 +397,14 @@ const Timeline = ({ data, isDarkMode }: { data: TimelineEntry[], isDarkMode: boo
   };
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
       className={`w-full ${isDarkMode ? 'bg-black' : 'bg-white'} font-sans md:px-10`}
       ref={containerRef}
     >
-      <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-10">
-        <div className="text-center mb-12">
-          <div className="flex items-center gap-2 mb-3 justify-center">
-            <div className={`h-px w-8 bg-modern-primary`}></div>
-            <span className={`text-sm uppercase tracking-wider font-medium text-modern-primary`}>
-              My journey
-            </span>
-            <div className={`h-px w-8 bg-modern-primary`}></div>
-          </div>
-          <h2 className="section-title mb-4 animate-reveal-up text-center">
-            Professional Experience
-          </h2>
-          <p className={`section-subtitle max-w-2xl mx-auto animate-reveal-up animate-delay-100 text-center ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-            A timeline of my career path and key roles in the tech industry
-          </p>
-        </div>
-      </div>
-        
       <div ref={ref} className="relative max-w-7xl mx-auto pb-20">
         {data.map((item, index) => (
           <div
@@ -312,16 +415,22 @@ const Timeline = ({ data, isDarkMode }: { data: TimelineEntry[], isDarkMode: boo
               <div className={`h-10 absolute left-3 md:left-3 w-10 rounded-full ${
                 isDarkMode ? 'bg-black' : 'bg-white'
               } flex items-center justify-center`}>
-                <div className={`h-4 w-4 rounded-full ${
+                <div className={`h-8 w-8 rounded-full ${
                   isDarkMode ? 'bg-gray-800' : 'bg-gray-100'
                 } border ${
                   isDarkMode ? 'border-gray-700' : 'border-gray-300'
-                } p-2`} />
+                } flex items-center justify-center`}>
+                  {isEducation ? (
+                    <GraduationCap className="h-4 w-4 text-modern-primary" />
+                  ) : (
+                    <Briefcase className="h-4 w-4 text-modern-primary" />
+                  )}
                 </div>
-              <h3 className="hidden md:block text-xl md:pl-20 md:text-4xl font-bold text-modern-primary">
+              </div>
+              <h3 className="hidden md:block text-xl md:pl-20 md:text-3xl font-bold text-modern-primary">
                 {item.title}
               </h3>
-                </div>
+            </div>
 
             <div className="relative pl-20 pr-4 md:pl-4 w-full">
               <div className="mb-2">
@@ -361,8 +470,8 @@ const Timeline = ({ data, isDarkMode }: { data: TimelineEntry[], isDarkMode: boo
                 {renderCardContent(item, index)}
               </motion.div>
             </div>
-            </div>
-          ))}
+          </div>
+        ))}
         <div
           style={{
             height: height + "px",
@@ -378,7 +487,7 @@ const Timeline = ({ data, isDarkMode }: { data: TimelineEntry[], isDarkMode: boo
           />
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

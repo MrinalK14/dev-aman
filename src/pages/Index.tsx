@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import HeroSection from '../components/HeroSection';
@@ -7,6 +6,7 @@ import SkillsSection from '../components/SkillsSection';
 import ExperienceSection from '../components/ExperienceSection';
 import ProjectsSection from '../components/ProjectsSection';
 import CertificationsSection from '../components/CertificationsSection';
+import InterestsSection from '../components/InterestsSection';
 import ContactSection from '../components/ContactSection';
 import Footer from '../components/Footer';
 
@@ -50,6 +50,7 @@ const Index = () => {
       <ExperienceSection isDarkMode={isDarkMode} />
       <ProjectsSection isDarkMode={isDarkMode} />
       <CertificationsSection isDarkMode={isDarkMode} />
+      <InterestsSection isDarkMode={isDarkMode} />
       <ContactSection isDarkMode={isDarkMode} />
       <Footer isDarkMode={isDarkMode} />
     </div>
